@@ -2,7 +2,7 @@ import json
 import spacy
 
 from gensim import corpora, models, similarities
-
+#adicionando comentario
 
 resumo_nome = input("Digite o nome do arquivo .json para criar: ")
 resumo_ler = input("Digite o nome dos dados .json para leitura: ")
