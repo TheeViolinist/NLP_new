@@ -4,9 +4,9 @@ import spacy
 from gensim import corpora, models, similarities
 #adicionando comentario
 
-resumo_nome = "SimilaridadesDicionario/similarity18.json"
+resumo_nome = "../similaridadeOrientadores/similarityOrientadores14.txt"
 #resumo_ler = input("Digite o nome dos dados .json para leitura: ")
-resumo_ler = "Resumos/resumo18.json"
+resumo_ler = "../resumoOrientadores/resumoOrientadores14.json"
 
 #Acessa o token e cria uma string somente com palavras lemmatizadas
 def lemmatizer_word(doc):
@@ -58,7 +58,7 @@ with open(resumo_ler) as file:
     # Text irá assumir os valores de cada dicionário, então para acessar devemos utilizar somente a keyword
     # E armazenar em uma lista contendo somente os textos
     for text in texts:
-        texts_data.append(text["texto"])
+        texts_data.append(text["texto:"])
 
     texts_dados = texts
 
@@ -124,21 +124,36 @@ similarity_data_new = similarity_data.tolist()
 
 #print(similarity_data_new)
 
-dados_comparacoes = dict()
-comparacoes = list()
+#dados_comparacoes = dict()
+#comparacoes = list()
 
+arq = open(resumo_nome, 'w')
 
-for i in range(len(similarity_data)):
+for i in range(len(similarity_data_new)):
     for j in range(len(similarity_data_new[i])):
-        dados_comparacoes["autor 1"] = texts_dados[i]["autor"]
-        dados_comparacoes["autor 2"] = texts_dados[j]["autor"]
-        dados_comparacoes["valor"] = similarity_data_new[i][j]
-        comparacoes.append(dados_comparacoes.copy())
+        if similarity_data_new[i][j] >= 0.7 and i != j:
+            print(f'{texts_dados[i]} and {texts_dados[j]}')
+            print(similarity_data_new[i][j])
+            a = input()
+        if j == len(similarity_data_new) - 1:
+            data_string = str(similarity_data_new[i][j]) + '\n'
+        else:
+            data_string = str(similarity_data_new[i][j]) + ' '
+        arq.write(data_string)
+    arq.write('\n')
+    
+
+#for i in range(len(similarity_data)):
+#    for j in range(len(similarity_data_new[i])):
+#        dados_comparacoes["autor 1"] = texts_dados[i]["autor"]
+#        dados_comparacoes["autor 2"] = texts_dados[j]["autor"]
+#        dados_comparacoes["valor"] = similarity_data_new[i][j]
+#        comparacoes.append(dados_comparacoes.copy())
        
 
 #Salvando os dados em .json
-with open(resumo_nome, 'w') as resumo_js:
-    json.dump(comparacoes, resumo_js, indent = 4, ensure_ascii=False)
+#with open(resumo_nome, 'w') as resumo_js:
+#    json.dump(comparacoes, resumo_js, indent = 4, ensure_ascii=False)
 
-resumo_js.close()
+#resumo_js.close()
 
