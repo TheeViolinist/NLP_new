@@ -47,17 +47,19 @@ def remove_stop_words(docs_list : list):
 
 
 
+
 def open_orientadores_resumo(resum_ler):
-    texts_data: list()
+    texts_data = list()
     # Leitura dos arquivos json, isso é uma lista de dicionários
     with open(resumo_ler) as file:
         texts = json.load(file)
         # Lista de texto que vamos analisar a similaridade
         # Text irá assumir os valores de cada dicionário, então para acessar devemos utilizar somente a keyword
         # E armazenar em uma lista contendo somente os textos
-        print("oi")
+        
         for text in texts:
             texts_data.append(text["texto:"])
+           
             
     file.close()
 
@@ -67,7 +69,7 @@ def open_orientadores_resumo(resum_ler):
 
 def main():
     nlp = spacy.load("pt_core_news_lg") # Vamos carregar os pacotes 
-    print("oi")
+    
     # lista de documentos docs da biblioteca Spacy
     docs_list :list = []
     texts_data = open_orientadores_resumo(resumo_ler)
@@ -129,35 +131,18 @@ def main():
     #dados_comparacoes = dict()
     #comparacoes = list()
 
+    
     arq = open(resumo_nome, 'w')
-
+    
     for i in range(len(similarity_data_new)):
         for j in range(len(similarity_data_new[i])):
-            if similarity_data_new[i][j] >= 0.7 and i != j:
-                print(f'{texts_data[i]} and {texts_data[j]}')
-                print(similarity_data_new[i][j])
-                a = input()
             if j == len(similarity_data_new) - 1:
-                data_string = str(similarity_data_new[i][j]) + '\n'
+                data_string = str(round(similarity_data_new[i][j], 2)) + '\n'
             else:
-                data_string = str(similarity_data_new[i][j]) + ' '
+                data_string = str(round(similarity_data_new[i][j], 2)) + ' '
             arq.write(data_string)
-        arq.write('\n')
         
-
-    #for i in range(len(similarity_data)):
-    #    for j in range(len(similarity_data_new[i])):
-    #        dados_comparacoes["autor 1"] = texts_dados[i]["autor"]
-    #        dados_comparacoes["autor 2"] = texts_dados[j]["autor"]
-    #        dados_comparacoes["valor"] = similarity_data_new[i][j]
-    #        comparacoes.append(dados_comparacoes.copy())
         
-
-    #Salvando os dados em .json
-    #with open(resumo_nome, 'w') as resumo_js:
-    #    json.dump(comparacoes, resumo_js, indent = 4, ensure_ascii=False)
-
-    #resumo_js.close()
     return 0
 
 
