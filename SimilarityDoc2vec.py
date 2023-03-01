@@ -2,6 +2,7 @@ import json
 import spacy
 
 import gensim
+import nltk
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from nltk.tokenize import word_tokenize
 from gensim.models.doc2vec import Doc2Vec
@@ -41,8 +42,8 @@ def remove_stop_words(docs_list : list):
                 # adiciona a string temporaria
                 text_string += token.text + ' '
         
-        # corta a string tratada e armazena na lista
-        texts_treated.append(text_string.split())
+        # Armazena a string apenas sem stop_words
+        texts_treated.append(text_string.lower())
     
 
     return texts_treated
@@ -69,14 +70,13 @@ def open_orientadores_resumo(resum_ler):
     return texts_data
 
 
-
-def tagged_document(list_words):
     
     
 
 def main():
     nlp = spacy.load("pt_core_news_lg") # Vamos carregar os pacotes 
-    
+    nltk.download('punkt')
+
     # lista de documentos docs da biblioteca Spacy
     docs_list :list = []
     texts_data = open_orientadores_resumo(resumo_ler)
@@ -94,16 +94,26 @@ def main():
         docs_list.append(nlp(text_lemmatizer))
 
 
+    
 
 
     # Remove-se a stop words
     # Em texts_data_treated temos uma matriz quadrada, onde cada elemento contém outra lista, no qual essa lista
     # Representada o conjunto de palavras de cada texto tratado, por exemplo, o texto 1 vai conter as seguintes palavras lemmatizadas e sem stop words
     texts_data_treated : list = remove_stop_words(docs_list)
-
-    #Agora vamos treinar o modelo, primeiramente vamos idenficar nossos dados
-    tagged_data = [TaggedDocument(words=word_tokenize(_d.lower())), tags=[str(i)] for in, _d in enumerate(data)]
-   
+    
+    
+    # Agora vamos treinar o modelo, primeiramente vamos idenficar nossos dados
+    # Enumerate() pega tanto o indice como valor da lista
+    # Basicamente estamos indicando os dados do nosso documento em forma de token para facilitar o treinamento, onde vamos ter uma lista que contém as palavras 
+    # do texto tokenizada e indicada por uma determinada tag
+    tagged_data = [TaggedDocument(words=word_tokenize(text, language='portuguese'), tags=[str(i)]) for i, text in enumerate(texts_data_treated)]
+    
+    # Podemos realizar o treinamento do modelo
+    model = gensim.models.doc2vec.Doc2vec(epochs=80)
+    model.build_vocab(tagged_data)
+    model.train(tagged_data, total_examples=model.corpus_count, epochs=80)
+    model.save("d2v.model")
 
 if __name__== '__main__':
     main()
