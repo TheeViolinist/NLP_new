@@ -5,7 +5,7 @@ import gensim
 import nltk
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from nltk.tokenize import word_tokenize
-from gensim.models.doc2vec import Doc2Vec
+
 
 
 resumo_nome = "../similaridadeOrientadores/similarityOrientadores14.txt"
@@ -98,8 +98,7 @@ def main():
 
 
     # Remove-se a stop words
-    # Em texts_data_treated temos uma matriz quadrada, onde cada elemento contém outra lista, no qual essa lista
-    # Representada o conjunto de palavras de cada texto tratado, por exemplo, o texto 1 vai conter as seguintes palavras lemmatizadas e sem stop words
+    # texts_data_treated representa os textos sem stop words e palavras lemmatizadas
     texts_data_treated : list = remove_stop_words(docs_list)
     
     
@@ -109,11 +108,20 @@ def main():
     # do texto tokenizada e indicada por uma determinada tag
     tagged_data = [TaggedDocument(words=word_tokenize(text, language='portuguese'), tags=[str(i)]) for i, text in enumerate(texts_data_treated)]
     
-    # Podemos realizar o treinamento do modelo
-    model = gensim.models.doc2vec.Doc2vec(epochs=80)
+    
+    # Podemos realizar o treinamento do modelo, epochs significa a quantia de vezes que será feito o algoritmo para treinamento
+    model = gensim.models.doc2vec.Doc2Vec(epochs=80)
     model.build_vocab(tagged_data)
     model.train(tagged_data, total_examples=model.corpus_count, epochs=80)
-    model.save("d2v.model")
+    model.save("similarity.model")
+
+    model = Doc2Vec.load("similarity.model")
+    
+    similar_doc = model.dv.most_similar('1')
+
+    print(texts_data_treated[1])
+    print(similar_doc)
+    print(texts_data_treated[int(similar_doc[0][0])])
 
 if __name__== '__main__':
     main()

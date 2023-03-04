@@ -136,6 +136,10 @@ def main():
     
     for i in range(len(similarity_data_new)):
         for j in range(len(similarity_data_new[i])):
+            if similarity_data_new[i][j] >= 0.4 and i != j:
+                print(texts_data[i])
+                print(texts_data[j])
+                a = input()
             if j == len(similarity_data_new) - 1:
                 data_string = str(round(similarity_data_new[i][j], 2)) + '\n'
             else:
