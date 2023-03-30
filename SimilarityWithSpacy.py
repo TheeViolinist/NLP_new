@@ -4,9 +4,9 @@ import spacy
 from gensim import corpora, models, similarities
 
 
-resumo_nome = "../similaridadeOrientadores/similarityOrientadores14.txt"
+resumo_nome = "../similaridadeOrientadores/similarityOrientadores14Alin.txt"
 #resumo_ler = input("Digite o nome dos dados .json para leitura: ")
-resumo_ler = "../resumoOrientadores/resumoOrientadores14.json"
+resumo_ler = "../resumoOrientadores/resumoOrientadores14Alin.json"
 
 #Acessa o token e cria uma string somente com palavras lemmatizadas
 def lemmatizer_word(doc):
@@ -82,7 +82,7 @@ def main():
 
         # Envia o doc como parâmetro para lemmatizer_word, onde ela retorna uma string lematizada
         text_lemmatizer : str = lemmatizer_word(doc)
-
+        
         # Depois adicionamos em doc_list o texto ja lematizado
         docs_list.append(nlp(text_lemmatizer))
 
@@ -136,10 +136,6 @@ def main():
     
     for i in range(len(similarity_data_new)):
         for j in range(len(similarity_data_new[i])):
-            if similarity_data_new[i][j] >= 0.4 and i != j:
-                print(texts_data[i])
-                print(texts_data[j])
-                a = input()
             if j == len(similarity_data_new) - 1:
                 data_string = str(round(similarity_data_new[i][j], 2)) + '\n'
             else:
