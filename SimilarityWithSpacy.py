@@ -4,7 +4,7 @@ import spacy
 from gensim import corpora, models, similarities
 
 
-resumo_nome = "../similaridadeOrientadores/similarityOrientadores14Alin.txt"
+resumo_nome = "../similaridadeOrientadores/similarityOrientadores14Alin.json"
 #resumo_ler = input("Digite o nome dos dados .json para leitura: ")
 resumo_ler = "../resumoOrientadores/resumoOrientadores14Alin.json"
 
@@ -132,18 +132,23 @@ def main():
     #comparacoes = list()
 
     
-    arq = open(resumo_nome, 'w')
+    similarity_dic = list()
     
     for i in range(len(similarity_data_new)):
-        arq.write(f'{i}\n')
+        similar = dict()
+        similar["indice"] = i
+        data_string = ''
         for j in range(len(similarity_data_new[i])):
-            if j == len(similarity_data_new) - 1:
-                data_string = str(round(similarity_data_new[i][j], 2)) + '\n'
-            else:
-                data_string = str(round(similarity_data_new[i][j], 2)) + ' '
-            arq.write(data_string)
+            data_string += str(round(similarity_data_new[i][j], 2)) + ' '
         
         
+        similar["similaridade"] = data_string    
+        similarity_dic.append(similar)
+    
+    
+    with open(resumo_nome, 'w') as similaridade_js:
+        json.dump(similarity_dic, similaridade_js, indent = 4, ensure_ascii=False)
+    similaridade_js.close()
     return 0
 
 
