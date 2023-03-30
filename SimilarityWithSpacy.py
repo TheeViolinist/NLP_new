@@ -135,6 +135,7 @@ def main():
     arq = open(resumo_nome, 'w')
     
     for i in range(len(similarity_data_new)):
+        arq.write(f'{i}\n')
         for j in range(len(similarity_data_new[i])):
             if j == len(similarity_data_new) - 1:
                 data_string = str(round(similarity_data_new[i][j], 2)) + '\n'
