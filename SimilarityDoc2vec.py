@@ -1,6 +1,7 @@
 import json
 import spacy
 
+import numpy as np
 import gensim
 import nltk
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
@@ -8,9 +9,9 @@ from nltk.tokenize import word_tokenize
 
 
 
-resumo_nome = "../similaridadeOrientadores/similarityOrientadores14.txt"
+resumo_nome = "../similaridadeOrientadores/similarityOrientadores14AliDoc2Vec.json"
 #resumo_ler = input("Digite o nome dos dados .json para leitura: ")
-resumo_ler = "../resumoOrientadores/resumoOrientadores14.json"
+resumo_ler = "../resumoOrientadores/resumoOrientadores14Alin.json"
 
 #Acessa o token e cria uma string somente com palavras lemmatizadas
 def lemmatizer_word(doc):
@@ -99,8 +100,8 @@ def main():
 
     # Remove-se a stop words
     # texts_data_treated representa os textos sem stop words e palavras lemmatizadas
-    texts_data_treated : list = remove_stop_words(docs_list)
-    
+    #texts_data_treated : list = remove_stop_words(docs_list)
+    texts_data_treated = texts_data
     
     # Agora vamos treinar o modelo, primeiramente vamos idenficar nossos dados
     # Enumerate() pega tanto o indice como valor da lista
@@ -110,18 +111,38 @@ def main():
     
     
     # Podemos realizar o treinamento do modelo, epochs significa a quantia de vezes que será feito o algoritmo para treinamento
-    model = gensim.models.doc2vec.Doc2Vec(epochs=80)
+    model = gensim.models.doc2vec.Doc2Vec(epochs=100)
     model.build_vocab(tagged_data)
-    model.train(tagged_data, total_examples=model.corpus_count, epochs=80)
+    model.train(tagged_data, total_examples=model.corpus_count, epochs=100)
     model.save("similarity.model")
 
     model = Doc2Vec.load("similarity.model")
     
-    similar_doc = model.dv.most_similar('1')
+    matrix_length = len(texts_data_treated)
+    similarity_matrix = np.zeros((matrix_length, matrix_length))
+    
 
-    print(texts_data_treated[1])
-    print(similar_doc)
-    print(texts_data_treated[int(similar_doc[0][0])])
+    similarity_data = list()  
+    
+
+    for i in range(matrix_length):
+        data = dict()
+        data["indice"] = i
+        similarity_string = ''
+        for j in range(matrix_length):
+            similarity_matrix[i, j] = model.dv.similarity(i, j)
+            similarity_string += str(round(similarity_matrix[i][j], 2)) + ' '
+        
+        data['similaridade'] = similarity_string
+
+        similarity_data.append(data)
+    
+    
+
+    with open(resumo_nome, 'w') as similaridade_js:
+        json.dump(similarity_data, similaridade_js, indent=4)
+   
+
 
 if __name__== '__main__':
     main()
